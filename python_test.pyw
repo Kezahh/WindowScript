@@ -59,56 +59,59 @@ def print_debug(message)
         pass
 
 
-def main():
+def check_arguments():
+    """Check arguments to script.
+    
+    0 = Left
+    1 = Center
+    2 = Right
+    3 = Big Center
+    """
     if len(sys.argv) > 1:
         try:
-            POSITION_INDEX = int(sys.argv[1])
+            return int(sys.argv[1])
         except ValueError:
-            POSITION_INDEX = 0
+            return = 0
     else:
-        POSITION_INDEX = 0
+        return 0
+    
 
-    output_file.write(str(POSITION_INDEX))
+def get_parent_window_handle(window_handle):
+    """Returns a handle to the parent window.
+    
+    Loops through parent windows until it reaches the topmost parent.
+    """
+    parent_handle = window_handle
+    next_handle = windll.user32.GetParent(parent_handle)
+    while (next_handle != 0):
+        parent_handle = next_handle
+        next_handle = windll.user32.GetParent(parent_handle)
+    
+    return parent_handle
+
+
+def main():
+    POSITION_INDEX = check_arguments()
+
     if (POSITION_INDEX in range(0,3)):
         x_left = 1706*POSITION_INDEX
         target_width = 1706
-        target_height = 1400
     elif (POSITION_INDEX == 3):
         x_left = 1280
         target_width = 2560
-        target_height = 1400
 
+    target_height = 1400
     y_top = 0
 
     window_handle = windll.user32.GetForegroundWindow()
 
-    handles = []
-    i = -1
     while (True):
-        i += 1
-        handles.append(window_handle)
         window_handle = windll.user32.GetWindow(window_handle, 2)
-        parent_handle = window_handle
-        next_handle = windll.user32.GetParent(parent_handle)
-        while (next_handle != 0):
-            parent_handle = next_handle
-            next_handle = windll.user32.GetParent(parent_handle)
-        process_id = ctypes.c_ulong()
-        result = windll.user32.GetWindowThreadProcessId(parent_handle, byref(process_id))
-        
-        window_text_length = windll.user32.GetWindowTextLengthA(window_handle)
-        window_text = ctypes.create_string_buffer(window_text_length + 1)
-        windll.user32.GetWindowTextA(window_handle, byref(window_text), window_text_length + 1)
-        
-        try:
-            actual_text = str(window_text.value)
-        except UnicodeEncodeError:
-            actual_text = ""
+        parent_handle = get_parent_window_handle(window_handle)
         
         if (windll.user32.IsWindowVisible(window_handle) == 1):
             window_handle = parent_handle
             break
-        
         
         
     window_rect = RECT()
@@ -123,7 +126,6 @@ def main():
     border_width = (window_rect.w - frame_rect.w)
     border_height = (window_rect.h - frame_rect.h)
 
-    #import pdb; pdb.set_trace()
 
     window_new_x = x_left + (window_rect.x - frame_rect.x)
     window_new_width = target_width + border_width
