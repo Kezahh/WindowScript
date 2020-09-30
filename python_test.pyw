@@ -43,9 +43,9 @@ class RECT(Structure):
         return x if x < (1<<31) else (x - (1<<32))
     
 
-output_path = r"C:\Users\Kerryn\Desktop\output.txt"
+OUTPUT_PATH = os.path.join(os.environ["USERPROFILE"], r"Desktop\output.txt")
 
-output_file = open(output_path, 'w')
+output_file = open(OUTPUT_PATH, 'w')
 
 output_file.write("hello my python\n")
 
