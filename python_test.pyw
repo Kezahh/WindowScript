@@ -12,6 +12,8 @@ from ctypes import windll, byref, Structure, wintypes, sizeof
 
 
 class RECT(Structure):
+    """RECT structure needed for user32.dll function returns."""
+    
     _fields_ = [
         # Order of fields is important. Must be like this.
         ('left', wintypes.ULONG),
@@ -44,6 +46,7 @@ output_file = open(OUTPUT_PATH, 'w')
 
 output_file.write("hello my python\n")
 
+# Define Windows ENUM constant
 DWMA_EXTENDED_FRAME_BOUNDS = 9
 
 if len(sys.argv) > 1:
