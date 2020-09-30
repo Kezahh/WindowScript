@@ -33,11 +33,6 @@ class RECT(Structure):
     def h(self):
         return (self._convert_ulong_to_int(self.bottom) - self._convert_ulong_to_int(self.top))
     
-    #x = property(lambda self: self._convert_ulong_to_int(self.left))
-    #y = property(lambda self: self._convert_ulong_to_int(self.top))
-    #w = property(lambda self: self._convert_ulong_to_int(self.right) - self._convert_ulong_to_int(self.left))
-    #h = property(lambda self: self._convert_ulong_to_int(self.bottom) - self._convert_ulong_to_int(self.top))
-    
     @staticmethod
     def _convert_ulong_to_int(x):
         return x if x < (1<<31) else (x - (1<<32))
