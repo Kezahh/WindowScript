@@ -41,13 +41,23 @@ class RECT(Structure):
     
 
 OUTPUT_PATH = os.path.join(os.environ["USERPROFILE"], r"Desktop\output.txt")
-
 output_file = open(OUTPUT_PATH, 'w')
 
-output_file.write("hello my python\n")
+def print_debug(message)
+    """Print message to debug file.
+    
+    Script needs to run with no console. Debug file is used to see debug 
+    messages.
+    """
+    try:
+        output_file.write(message + "\n")
+    except NameError:
+        pass
+
 
 # Define Windows ENUM constant
 DWMA_EXTENDED_FRAME_BOUNDS = 9
+
 
 if len(sys.argv) > 1:
     try:
@@ -59,7 +69,6 @@ else:
 
 output_file.write(str(POSITION_INDEX))
 if (POSITION_INDEX in range(0,3)):
-    output_file.write("yep yep yep yep")
     x_left = 1706*POSITION_INDEX
     target_width = 1706
     target_height = 1400
@@ -70,28 +79,21 @@ elif (POSITION_INDEX == 3):
 
 y_top = 0
 
-output_file.write(str(x_left))
 window_handle = windll.user32.GetForegroundWindow()
-output_file.write("window handle is " + str(window_handle) + "\n")
 
 handles = []
-#for i in range(1):
 i = -1
 while (True):
     i += 1
     handles.append(window_handle)
     window_handle = windll.user32.GetWindow(window_handle, 2)
-    output_file.write("window handle " + str(i) + " is " + str(window_handle) + "\n")
     parent_handle = window_handle
     next_handle = windll.user32.GetParent(parent_handle)
     while (next_handle != 0):
         parent_handle = next_handle
         next_handle = windll.user32.GetParent(parent_handle)
-    output_file.write("window handle parent " + str(i) + " is " + str(parent_handle) + "\n")
-    output_file.write("is window " + str(i) + " visible? " + str(windll.user32.IsWindowVisible(window_handle)) + "\n")
     process_id = ctypes.c_ulong()
     result = windll.user32.GetWindowThreadProcessId(parent_handle, byref(process_id))
-    output_file.write("process id " + str(i) + " is " + str(process_id.value) + "\n")
     
     window_text_length = windll.user32.GetWindowTextLengthA(window_handle)
     window_text = ctypes.create_string_buffer(window_text_length + 1)
@@ -102,22 +104,12 @@ while (True):
     except UnicodeEncodeError:
         actual_text = ""
     
-    print(actual_text)
-    output_file.write("Window Text " + str(i) + " is " + actual_text + "\n")
-    
-    #window_handle = parent_handle
     if (windll.user32.IsWindowVisible(window_handle) == 1):
-        output_file.write("yep\n")
         window_handle = parent_handle
         break
     
-    #process_id = ctypes.c_ulong()
-    #result = windll.user32.GetWindowThreadProcessId(parent_handle, byref(process_id))
-    #output_file.write("process id " + str(i) + " is " + str(process_id.value) + "\n")
     
     
-output_file.write("(" + ",".join(map(str, handles)) + ")\n")
-output_file.write("target window is " + str(window_handle))
 window_rect = RECT()
 client_rect = RECT()
 frame_rect = RECT()
@@ -140,4 +132,3 @@ windll.user32.MoveWindow(
     window_handle, window_new_x, 0,
     window_new_width, window_new_height, True
 )
-output_file.write("we did it")
