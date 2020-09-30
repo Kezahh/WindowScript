@@ -1,3 +1,11 @@
+"""Main WINDOWSCRIPT."""
+
+###############################################################################
+# Copyright (C) Kerryn Spanhel - All Rights Reserved
+# Unauthorized copying of this file is at user's own risk.
+# Written by Kerryn Spanhel, 2020
+###############################################################################
+
 import sys
 import ctypes
 from ctypes import windll, byref, Structure, wintypes, sizeof
