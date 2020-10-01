@@ -6,6 +6,7 @@
 # Written by Kerryn Spanhel, 2020
 ###############################################################################
 
+import os
 import sys
 import ctypes
 from ctypes import windll, byref, Structure, wintypes, sizeof
@@ -47,7 +48,7 @@ class RECT(Structure):
         return x if x < (1<<31) else (x - (1<<32))
 
 
-def print_debug(message)
+def print_debug(message):
     """Print message to debug file.
     
     Script needs to run with no console. Debug file is used to see debug 
@@ -71,7 +72,7 @@ def check_arguments():
         try:
             return int(sys.argv[1])
         except ValueError:
-            return = 0
+            return 0
     else:
         return 0
     
@@ -104,11 +105,13 @@ def main():
     y_top = 0
 
     window_handle = windll.user32.GetForegroundWindow()
-
+    print_debug(" \t" + str(window_handle))
+    i = 0
     while (True):
-        window_handle = windll.user32.GetWindow(window_handle, 2)
+        #window_handle = windll.user32.GetWindow(window_handle, 4) #get owner
+        window_handle = windll.user32.GetWindow(window_handle, 2) #get next
         parent_handle = get_parent_window_handle(window_handle)
-        
+        print_debug(str(i) + "\t" + str(window_handle))
         if (windll.user32.IsWindowVisible(window_handle) == 1):
             window_handle = parent_handle
             break
@@ -137,5 +140,5 @@ def main():
     )
 
 if __name__ == "__main__":
-    with open(OUTPUT_PATH, 'w') as output_file:
+    with open(OUTPUT_PATH, 'a') as output_file:
         main()
