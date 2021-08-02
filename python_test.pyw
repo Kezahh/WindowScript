@@ -121,18 +121,36 @@ def main():
     client_rect = RECT()
     frame_rect = RECT()
 
+
+    # window_rect = big outside window with borders.
+    # frame_rect = inner window, minus the border.
     windll.user32.GetWindowRect(window_handle, byref(window_rect))
     windll.user32.GetClientRect(window_handle, byref(client_rect))
     windll.dwmapi.DwmGetWindowAttribute(window_handle, DWMA_EXTENDED_FRAME_BOUNDS, byref(frame_rect), sizeof(frame_rect))
+
+    # Check if window already in position
+    # If already in position on far left or right, then make smaller.
+    if POSITION_INDEX in [0, 2]:
+        # If window already in position
+        if all([
+            frame_rect.x == x_left,
+            frame_rect.w == target_width,
+            frame_rect.h == target_height
+            ]):
+            # if window on right, new x_left, else x = 0 for far left.
+            if POSITION_INDEX == 2:
+                x_left = 1280 + 2560
+                
+            target_width = 1280
 
 
     border_width = (window_rect.w - frame_rect.w)
     border_height = (window_rect.h - frame_rect.h)
 
-
     window_new_x = x_left + (window_rect.x - frame_rect.x)
     window_new_width = target_width + border_width
     window_new_height = target_height + border_height
+            
 
     windll.user32.MoveWindow(
         window_handle, window_new_x, 0,
