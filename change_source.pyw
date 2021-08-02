@@ -11,6 +11,7 @@ import sys
 import ctypes
 from ctypes import windll, byref, Structure, WinError, POINTER, WINFUNCTYPE
 from ctypes.wintypes import BOOL, HMONITOR, HDC, RECT, LPARAM, DWORD, BYTE, WCHAR, HANDLE
+import time
 
 
 # Define debug output path
@@ -88,5 +89,9 @@ for handle in _iter_physical_monitors():
         target_source = USBC
     else:
         target_source = DISPLAYPORT
-        
+    
     set_vcp_feature(handle, 0x60, target_source)
+    
+    #need to sleep then set the USB to USB1. This helps when screen is asleep.
+    time.sleep(1)
+    set_vcp_feature(handle, 0xE7, 0)
