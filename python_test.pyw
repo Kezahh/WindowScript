@@ -21,6 +21,9 @@ DWMA_EXTENDED_FRAME_BOUNDS = 9
 # Define window titles to ignore
 IGNORE_LIST = ["NexonLauncher"]
 
+# SWITCH DEBUG PRINTING
+DEBUG_PRINTING_ON = False
+
 
 class RECT(Structure):
     """RECT structure needed for user32.dll function returns."""
@@ -57,10 +60,11 @@ def print_debug(message):
     Script needs to run with no console. Debug file is used to see debug 
     messages.
     """
-    try:
-        output_file.write(message + "\n")
-    except NameError:
-        pass
+    if DEBUG_PRINTING_ON:
+        try:
+            output_file.write(message + "\n")
+        except NameError:
+            pass
 
 
 def check_arguments():
@@ -173,5 +177,8 @@ def main():
     )
 
 if __name__ == "__main__":
-    with open(OUTPUT_PATH, 'a') as output_file:
+    if DEBUG_PRINTING_ON:
+        with open(OUTPUT_PATH, 'a') as output_file:
+            main()
+    else:
         main()
