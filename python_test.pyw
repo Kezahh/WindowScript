@@ -18,6 +18,9 @@ OUTPUT_PATH = os.path.join(os.environ["USERPROFILE"], r"Desktop\output.txt")
 # Define Windows ENUM constant
 DWMA_EXTENDED_FRAME_BOUNDS = 9
 
+# Define window titles to ignore
+IGNORE_LIST = ["NexonLauncher"]
+
 
 class RECT(Structure):
     """RECT structure needed for user32.dll function returns."""
@@ -89,6 +92,15 @@ def get_parent_window_handle(window_handle):
         next_handle = windll.user32.GetParent(parent_handle)
     
     return parent_handle
+    
+    
+def get_window_title(window_handle):
+    """Returns TITLEBAR string from target window_handle"""
+    
+    window_title_length = windll.user32.GetWindowTextLengthW(window_handle) + 1 #include null char
+    window_title = ctypes.create_string_buffer(window_title_length)
+    windll.user32.GetWindowTextA(window_handle, window_title, window_title_length)
+    return window_title.value.decode('utf-8')
 
 
 def main():
@@ -105,14 +117,17 @@ def main():
     y_top = 0
 
     window_handle = windll.user32.GetForegroundWindow()
-    print_debug(" \t" + str(window_handle))
+    window_title = get_window_title(window_handle)
+    print_debug(" \t" + str(window_handle) + "\t" + window_title)
     i = 0
     while (True):
+        i = i + 1
         #window_handle = windll.user32.GetWindow(window_handle, 4) #get owner
         window_handle = windll.user32.GetWindow(window_handle, 2) #get next
         parent_handle = get_parent_window_handle(window_handle)
-        print_debug(str(i) + "\t" + str(window_handle))
-        if (windll.user32.IsWindowVisible(window_handle) == 1):
+        window_title = get_window_title(window_handle)
+        print_debug(str(i) + "\t" + str(window_handle) + "\t" + window_title)
+        if (windll.user32.IsWindowVisible(window_handle) == 1 and window_title not in IGNORE_LIST):
             window_handle = parent_handle
             break
         
